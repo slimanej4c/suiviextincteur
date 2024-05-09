@@ -5,7 +5,10 @@ const Page1= () => {
   return (
     <View>
       <Text>Page1</Text>
-    
+      <Text>Page1</Text>
+      <Text>Page1</Text>
+      <Text>Page1</Text>
+     
     </View>
   );
 };

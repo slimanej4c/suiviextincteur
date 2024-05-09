@@ -1,31 +1,15 @@
 import { Link, router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import { connect } from 'react-redux';
-import { Login_redux} from '../../redux';
-const Login= (props) => {
-  const login_action=()=>{
-    router.push({
-      pathname: "/Home",
-    
-    })
-    console.log('login is pressed')
-    {props.Login_redux()}
-  }
+const part1= (props) => {
   return (
-
     <View>
-      <Text>Login</Text>
-      <Text>Login</Text>
-      <Text>Login</Text>
-      <Text>Login2 {props.load_logout}</Text>
-      <Pressable onPress={()=>login_action()}>
-     <Text>prsser  </Text>
-      </Pressable>
+      <Text>sous Page1 {props.load_logout}</Text>
     
     </View>
-
   );
 };
+
 const mapStateToProps = state => {
    
   return {
@@ -42,7 +26,7 @@ const mapDispatchToProps = dispatch => {
   
   return {
     
-  Login_redux: () => dispatch(Login_redux( )),
+
   
    
    // logout :(f)=>dispatch(logout(f)),r
@@ -57,5 +41,6 @@ export default  connect(
 
  
  
-)(Login) 
+)(part1) 
+
 
