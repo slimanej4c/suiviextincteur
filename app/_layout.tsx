@@ -1,10 +1,13 @@
 import { Stack } from "expo-router";
 import { Provider } from 'react-redux'
-import store from '../redux/store'
+import  store from '../redux/store'
+
+import { connect } from 'react-redux';
 //<Provider store={store}>     
 const RootLayout = () => {
   return (
 <Provider store={store}>  
+
     <Stack>
        
        <Stack.Screen
@@ -19,6 +22,7 @@ const RootLayout = () => {
 
      
     </Stack>
+
     </Provider>
   );
 };
