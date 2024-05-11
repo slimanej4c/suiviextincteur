@@ -1,6 +1,6 @@
 import { Link, router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
-import Part from '../../../../component/part/part2'  
+
 const Page2= () => {
   return (
     <View>
@@ -8,7 +8,7 @@ const Page2= () => {
       <Text>Page2</Text>
       <Text>Page2</Text>
       <Text>Page2222</Text>
-      <Part/>
+
     </View>
   );
 };
