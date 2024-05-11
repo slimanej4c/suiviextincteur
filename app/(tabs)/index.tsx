@@ -1,55 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Keyboard ,TouchableOpacity , ActivityIndicator  } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Keyboard, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Login_redux } from './../../redux';
 import { connect } from 'react-redux';
-import { Link, router } from "expo-router";
-//import { persistor,store } from './../../redux/store'; // Assurez-vous d'importer le persistor depuis votre fichier de store
-//import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Link, router } from "expo-router"; // Import de la fonction router pour la navigation
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const  App=(props)=> {
+const App = (props) => {
   const [inputFocused, setInputFocused] = useState(false);
   const [CheckLogin, setCheckLogin] = useState(false);
+  const [email, setEmail] = useState('admin@gmail.com');
+  const [password, setPassword] = useState('admin2024');
 
-  /*const storeData = async () => {
+  const storeData = async (key, value) => {
     try {
-      await AsyncStorage.setItem(
-        '@MySuperStore:key',
-        'is_login2',
-      );
-      console.log('Data saved successfully2.');
+      await AsyncStorage.setItem(key, value);
+      console.log('Data saved successfullyv r.');
     } catch (error) {
       console.error('Error saving data:', error);
     }
   };
-  
- 
-  
+
+  // Fonction de connexion
+  const login_action = (email, password) => {
+    props.Login_redux(email, password);
+  };
+
+  // Récupérer les données de connexion stockées localement
   const retrieveData = async () => {
     try {
-      const value = await AsyncStorage.getItem('@MySuperStore:key');
+      const value = await AsyncStorage.getItem('@MySuperStore:login');
       if (value !== null) {
-        // We have data!!
-        if (value=='is_login2')
-        console.log('Retrieved data:', value);
-        setCheckLogin(true)
-        router.push('./Home')
+        // Si les données existent et indiquent une connexion précédente, vérifiez
+        // s'il faut se connecter automatiquement
+        if (value == 'is_login') {
+          console.log('Retrieved data:', value);
+          setCheckLogin(true);
+          login_action(email, password);
+        }
       } else {
+        // Aucune donnée trouvée, pas de connexion précédente
+        setCheckLogin(false);
         console.log('No data found.');
       }
     } catch (error) {
       console.error('Error retrieving data:', error);
     }
   };
-  {!CheckLogin && retrieveData()}*/
-  
-  
-  const login_action = () => {
-    // Actions à effectuer lorsqu'on appuie sur le bouton de login
-    props.Login_redux()
 
-    
-  };
+  // Vérifie automatiquement la connexion lors du montage initial
+  if (!CheckLogin && !props.LogoutLoading) { retrieveData() }
 
+  // Si la connexion est réussie mais le chargement est en cours, attendez
+  if (CheckLogin && props.LogoutLoading) {
+    setCheckLogin(false)
+  }
+
+  // Effet pour écouter le clavier et mettre à jour l'état
   useEffect(() => {
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       setInputFocused(false);
@@ -59,49 +65,57 @@ const  App=(props)=> {
       keyboardDidHideListener.remove();
     };
   }, []);
+
+  // Effet pour gérer les actions après une connexion réussie
   useEffect(() => {
-    {props.LoggedIn && router.push('./Home')}
-    //{props.LoggedIn &&  storeData();}
-   
-    
+    { props.LoggedIn && storeData('@MySuperStore:email', email) }
+    { props.LoggedIn && storeData('@MySuperStore:password', password); }
+    { props.LoggedIn && storeData('@MySuperStore:login', 'is_login'); }
   }, [props.LoggedIn]);
+
+  // Effet pour rediriger vers la page d'accueil après une connexion réussie
   useEffect(() => {
-    
-    
+    { props.LoggedIn && router.replace('/Home'); }
   }, [props.LoginLoading]);
+
+  // Effet pour vérifier la connexion et récupérer les données si nécessaire
   useEffect(() => {
-    //{CheckLogin && retrieveData()}
-    
+    { CheckLogin && retrieveData() }
   }, [CheckLogin]);
+
+  // Effet pour récupérer les données lors du chargement
+  useEffect(() => {
+    { props.LogoutLoading && retrieveData() }
+  }, [props.LogoutLoading]);
+
+  // Rendu de l'interface utilisateur
   return (
     <View style={styles.container}>
-       {props.LoginLoading && (
-       <View style={styles.overlay}>
-       
+      {/* Overlay de chargement lors de la connexion */}
+      {props.LoginLoading && (
+        <View style={styles.overlay}>
           <View style={styles.overlayContent}>
             <ActivityIndicator size="large" color="red" />
-           
           </View>
-       
-      </View>
-       )}
-         {CheckLogin && (
-       <View style={styles.overlay}>
-       
+        </View>
+      )}
+      {/* Overlay de chargement lors de la récupération des données */}
+      {CheckLogin && (
+        <View style={styles.overlay}>
           <View style={styles.overlayContent}>
-            <ActivityIndicator size="large" color="red" />
-           
+            <ActivityIndicator size="large" color="green" />
           </View>
-       
-      </View>
-       )}
+        </View>
+      )}
       <View style={styles.section_top}>
-        <Text>LOGO</Text>
+        <Text>LOGoO </Text>
       </View>
-      <View style={[styles.section_center, inputFocused && { flex: 2/3 }]}>
+      <View style={[styles.section_center, inputFocused && { flex: 2 / 3 }]}>
         <View style={styles.input}>
           <TextInput
             placeholder="Email"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
             onFocus={() => setInputFocused(true)}
           />
         </View>
@@ -109,19 +123,21 @@ const  App=(props)=> {
           <TextInput
             placeholder="Password"
             secureTextEntry={true}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
             onFocus={() => setInputFocused(true)}
           />
         </View>
-        <TouchableOpacity style={styles.button} onPress={login_action}>
-      <Text style={styles.buttonText}>Login</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.button_transparent} onPress={null}>
+        <TouchableOpacity style={styles.button} onPress={() => login_action(email, password)}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button_transparent} onPress={null}>
           <Text style={styles.buttonText_transparent}>Create Account</Text>
           {props.LoginLoading && <Text>Loading...</Text>}
-        {props.LoggedIn && <Text>Congratulations!</Text>}
+          {props.LoggedIn && <Text>Congratulations!</Text>}
         </TouchableOpacity>
       </View>
-      <View style={[styles.section_bottom, inputFocused && { flex: 1/8 }]}></View>
+      <View style={[styles.section_bottom, inputFocused && { flex: 1 / 8 }]}></View>
     </View>
   );
 }
@@ -133,14 +149,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   overlay: {
-    position:'absolute',
+    position: 'absolute',
     flex: 1,
-    width:"100%",
-    height:"100%",
-    backgroundColor: 'rgba(255,0, 0, 0.2)', // Transparent background
+    width: "100%",
+    height: "100%",
+    backgroundColor: 'rgba(255,0, 0, 0.2)', // Overlay semi-transparent pour le chargement
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex:2
+    zIndex: 2
   },
   overlayContent: {
     backgroundColor: 'transparent',
@@ -150,21 +166,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-  
   },
   section_center: {
     flex: 2,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-  
   },
   section_bottom: {
     flex: 1,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-  
   },
   input: {
     width: '80%',
@@ -192,60 +205,34 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     marginBottom: 10,
-   
-    
-  
-    // Ajoutez ceci pour définir la couleur de survol
-    
   },
-  button_transparent:{
+  button_transparent: {
     width: '80%',
     height: 40,
     backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
- 
   },
   buttonText: {
-
     color: 'white',
   },
   buttonText_transparent: {
     color: 'red',
   },
-
 });
+
 const mapStateToProps = state => {
-   
   return {
-  
-  
-    LoginLoading:state.auth_reducer.LoginLoading,
-    LoggedIn:state.auth_reducer.LoggedIn,
-    
-
-
+    LogoutLoading: state.auth_reducer.LogoutLoading,
+    LoginLoading: state.auth_reducer.LoginLoading,
+    LoggedIn: state.auth_reducer.LoggedIn,
   }
 }
-
 
 const mapDispatchToProps = dispatch => {
-  
   return {
-    
-
-  
-   
-    Login_redux: () => dispatch(Login_redux()),
-    
-    
+    Login_redux: (email, password) => dispatch(Login_redux(email, password)),
   }
 }
 
-
-export default  connect(
-  mapStateToProps,mapDispatchToProps
-
- 
- 
-)(App) 
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -18,9 +18,9 @@ export const LOGIN_RESET= 'LOGIN_RESET'
 
 
 
-export const Logout_redux= (navigate) => async dispatch => {
+export const Logout_redux= () => async dispatch => {
  
- 
+  dispatch(LogoutSuccess ());
 
 
 };
@@ -72,7 +72,8 @@ export const RegisterRequest = () => {
 
   
 
-  export const Login_redux = () => async dispatch => {
+  export const Login_redux = (email,password) => async dispatch => {
+    console.log('Login_redux .........',email,password)
     dispatch(LoginRequest())
     setTimeout(() => {
       dispatch(LoginSuccess ());
@@ -132,6 +133,7 @@ export const LogoutFailure = (error) => {
 
 
     LoginLoading: false,
+    LogoutLoading: false,
     LoggedIn: false,
   }
   
@@ -169,7 +171,9 @@ export const LogoutFailure = (error) => {
       }
       case LOGOUT_SUCCESS: return {
         ...state, 
-       
+          LoginLoading: false,
+          LoggedIn: false,
+          LogoutLoading: true
   
       }
       case LOGOUT_FAILURE: return {
