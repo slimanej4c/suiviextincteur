@@ -1,96 +1,94 @@
-import { Link, router } from "expo-router";
-import { Pressable, Text, View ,TouchableOpacity  } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { Pressable, Text, View, StyleSheet, Animated, Easing } from 'react-native';
+import { Link } from 'expo-router';
 import { connect } from 'react-redux';
-import { Logout_redux } from './../../../redux';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-const Home= (props) => {
-  const retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@MySuperStore:login');
-      if (value !== null) {
-        // We have data!!
-     if(value == 'not_login'){
-      console.log('Retrieved data:date', value);
-      return true
+import Menu from '../../../component/menu/Menu';
+import {menuOpen_redux } from './../../../redux';
+const Home = (props) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuAnimation] = useState(new Animated.Value(0));
 
-     }
-        
-      } else {
-     
-        console.log('No data found.');
-      }
-    } catch (error) {
-      console.error('Error retrieving data:', error);
-    }
+  const toggleMenu = () => {
+    //setMenuOpen(!menuOpen);
+    props.menuOpen_redux()
   };
-  const storeData = async (key, value) => {
-    try {
-      await AsyncStorage.setItem(key, value);
-      console.log('Data saved successfully.',key);
-      if (retrieveData){
-        console.log('Data saved successfully.login');
-        retrieveData()
-        router.replace('/')
-      }
-    } catch (error) {
-      console.error('Error saving data:', error);
-    }
-  };
-  const logout=()=>{
-    props.Logout_redux()
-   
-    storeData('@MySuperStore:email', '')
-      
-      storeData('@MySuperStore:password', '')
-        storeData('@MySuperStore:login','not_login')
-       // router.replace('/');
-     }
+
+ 
+  useEffect(() => {
+    // Si le menu est ouvert, animez-le vers la droite (0 à 1), sinon vers la gauche (1 à 0)
+    Animated.timing(menuAnimation, {
+      toValue: props.menuOpen ? 1 : 0,
+      duration: 300,
+      easing: Easing.linear,
+      useNativeDriver: false,
+    }).start();
+  }, [props.menuOpen]);
+  const menuPosition = menuAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-300, 0],
+  });
+
   return (
-    <View>
-      <Text>Menu</Text>
-      <Text>Menu</Text>
-      <Text>Menu</Text>
-      <Text>Menu</Text>
-      <Link href="/Home/Pages/Page1">go page1</Link>
-      <Link href="/Home/Pages/Page2">go page1</Link>
-      <TouchableOpacity onPress={()=>logout()}>
-          <Text> logout</Text>
-         
-        </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={styles.menuButton} >
+      <Pressable  onPress={toggleMenu}>
+        <Text style={styles.menuButtonText}>Menu</Text>
+      </Pressable>
+      </View>
+      
+      <Animated.View style={[styles.menu, { transform: [{ translateX: menuPosition }] }]}>
+        <Menu />
+      </Animated.View>
+      <Link href="/Home/Pages/Page1">Aller à la page 1</Link>
+      <Link href="/Home/Pages/Page2">Aller à la page 2</Link>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    overflow: 'hidden',
+    
+  },
+  menuButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 1,
+    backgroundColor: 'gray',
+    padding: 10,
+    borderRadius: 5,
+    zIndex:3,
+    
+    
+  },
+  menuButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  menu: {
+    position: 'absolute',
+    top: 0,
+    left: '0%',
+    width: 300,
+    height: '100%',
+   
+
+    zIndex:2,
+  
+  },
+});
+
 const mapStateToProps = state => {
-   
   return {
-  
-  
-    LoginLoading:state.auth_reducer.LoginLoading,
-    LoggedIn:state.auth_reducer.LoggedIn,
-    
-
-
-  }
+      menuOpen: state.menu_reducer.menuOpen,
+     
+  };
 }
+const mapDispatchToProps = dispatch => ({
+  menuOpen_redux: () => dispatch(menuOpen_redux()),
 
+});
 
-const mapDispatchToProps = dispatch => {
-  
-  return {
-    
-
-  
-   
-    Logout_redux: () => dispatch(Logout_redux()),
-    
-    
-  }
-}
-
-
-export default  connect(
-  mapStateToProps,mapDispatchToProps
-
- 
- 
-)(Home) 
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
