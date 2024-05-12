@@ -8,7 +8,10 @@ const RootLayout = () => {
   return (
 <Provider store={store}>  
 
-    <Stack>
+    <Stack screenOptions={{
+              // Hide the header for all other routes.
+              headerShown: false,
+            }}>
        
        <Stack.Screen
         name="(tabs)"

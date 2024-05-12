@@ -4,6 +4,8 @@ import { Link } from 'expo-router';
 import { connect } from 'react-redux';
 import Menu from '../../../component/menu/Menu';
 import {menuOpen_redux } from './../../../redux';
+
+import { AntDesign } from '@expo/vector-icons';
 const Home = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuAnimation] = useState(new Animated.Value(0));
@@ -31,16 +33,13 @@ const Home = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.menuButton} >
-      <Pressable  onPress={toggleMenu}>
-        <Text style={styles.menuButtonText}>Menu</Text>
-      </Pressable>
+      
       </View>
       
       <Animated.View style={[styles.menu, { transform: [{ translateX: menuPosition }] }]}>
-        <Menu />
+      
       </Animated.View>
-      <Link href="/Home/Pages/Page1">Aller à la page 1</Link>
-      <Link href="/Home/Pages/Page2">Aller à la page 2</Link>
+    
     </View>
   );
 };

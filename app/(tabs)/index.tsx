@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Keyboard, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Login_redux } from './../../redux';
+import { Login_redux } from '../../redux';
 import { connect } from 'react-redux';
 import { Link, router } from "expo-router"; // Import de la fonction router pour la navigation
 import AsyncStorage from '@react-native-async-storage/async-storage';
