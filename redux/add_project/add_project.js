@@ -17,7 +17,13 @@ export const addUnit = (unitData) => async (dispatch) => {
     // dispatch(addUnitRequest());
     // Code pour ajouter une nouvelle unité à Firebase
     // await firebase.firestore().collection('units').add(unitData);
-    dispatch(addUnitSuccess());
+    setTimeout(() => {
+     
+      
+        //dispatch(addUnitSuccess());
+        dispatch(addUnitFailure("error"));
+        }, 4000);
+   
   } catch (error) {
     dispatch(addUnitFailure(error));
   }
@@ -44,6 +50,8 @@ export const addUnitFailure = (error) => {
 
 export const checkMemberExistence = (email) => async (dispatch) => {
   dispatch(checkMemberRequest());
+
+ 
   try {
     // dispatch(checkMemberRequest());
     // Code pour vérifier si le membre existe dans Firebase
@@ -53,7 +61,13 @@ export const checkMemberExistence = (email) => async (dispatch) => {
     // } else {
     //   dispatch(checkMemberSuccess(false));
     // }
-    dispatch(checkMemberSuccess(true)); // Exemple temporaire
+    setTimeout(() => {
+     
+      // dispatch(checkMemberSuccess(true)); // Exemple temporaire
+      dispatch(checkMemberFailure("message erreur check membre"))
+      }, 4000);
+
+
   } catch (error) {
     dispatch(checkMemberFailure(error));
   }
@@ -82,6 +96,7 @@ export const checkMemberFailure = (error) => {
 
   const initialState = {
     addUnitLoading: false,
+    is_addUnit: false,
     addUnitError: null,
     checkMemberLoading: false,
     checkMemberExists: false,
@@ -95,17 +110,20 @@ export const checkMemberFailure = (error) => {
           ...state,
           addUnitLoading: true,
           addUnitError: null,
+          is_addUnit: false,
         };
       case ADD_UNIT_SUCCESS:
         return {
           ...state,
           addUnitLoading: false,
+          is_addUnit:true,
         };
       case ADD_UNIT_FAILURE:
         return {
           ...state,
           addUnitLoading: false,
           addUnitError: action.error,
+          is_addUnit: false,
         };
       case CHECK_MEMBER_REQUEST:
         return {
@@ -117,8 +135,9 @@ export const checkMemberFailure = (error) => {
       case CHECK_MEMBER_SUCCESS:
         return {
           ...state,
-          checkMemberLoading: false,
           checkMemberExists: action.memberExists,
+          checkMemberLoading: false,
+          
         };
       case CHECK_MEMBER_FAILURE:
         return {

@@ -14,7 +14,7 @@ export const Add_unite = (props) => {
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [newMemberName, setNewMemberName] = useState('zs');
   const [newMemberRole, setNewMemberRole] = useState('');
-  const [showErrorExistMember, setShowErrorExistMember] = useState(false);
+  const [showErrorAddUnit, setshowErrorAddUnit] = useState('');
   const [memberExistenceMessage, setMemberExistenceMessage] = useState('');
   const createUnit = () => {
     // Vérifier que les champs obligatoires sont remplis
@@ -44,19 +44,41 @@ export const Add_unite = (props) => {
 
 
   useEffect(() => {
-    if (props.checkMemberExist) {
+    if (props.checkMemberExists) {
         setNewMemberName('');
         setNewMemberRole('');
         // Fermer la fenêtre modale d'ajout de membre
         setShowAddMemberModal(false);
         setMemberExistenceMessage('');
       }
-      else{
+      if (props.checkMemberError!=null) {
         const a= 'Ce membre n\'existe pas'+newMemberName
         setMemberExistenceMessage(a);
       }
+      
+      console.log('check membre ..',props.checkMemberLoading,props.checkMemberExists)
 
   }, [props.checkMemberLoading]);
+  useEffect(() => {
+    
+
+  }, [showAddMemberModal]);
+  useEffect(() => {
+    
+
+  }, [showErrorAddUnit]);
+  useEffect(() => {
+    
+    if (props.is_addUnit) {
+        setshowErrorAddUnit('unit added')
+      }
+      if (props.addUnitError!=null) {
+        setshowErrorAddUnit('error added')
+      }
+      
+      console.log('check add unit..',props.is_addUnit,props.addUnitError)
+  }, [  props.addUnitLoading]);
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -112,8 +134,10 @@ export const Add_unite = (props) => {
         />
 
         <Button title="Créer l'unité" onPress={createUnit} color="red" />
-        {props.addUnitLoading && <ActivityIndicator size="small" color="red" />}
-
+   
+        {props.addUnitLoading && <View style={{position:'absolute',top:'40%',right:"50%"}}><ActivityIndicator size="large" color="red" />     </View>}
+       
+        <Text style={styles.message}>{ showErrorAddUnit}</Text>
         <Modal visible={showAddMemberModal} animationType="slide" transparent={true}>
           <View style={[styles.modalContainer, styles.shadow, styles.textInput]}>
             <Text style={styles.label}>Nom du Membre (code utilisateur @code) :</Text>
@@ -136,7 +160,7 @@ export const Add_unite = (props) => {
               <Picker.Item label="Écrire" value="Écrire" />
             </Picker>
             <Button title="Ajouter" onPress={addMember} color="red" />
-            {props.checkMemberLoading&& <ActivityIndicator size="small" color="red" />}
+            {props.checkMemberLoading && <ActivityIndicator size="small" color="red" />}
             <Text style={styles.message}>{memberExistenceMessage}</Text>
             <Button title="Annuler" onPress={() => setShowAddMemberModal(false)} color="red" />
           </View>
@@ -204,6 +228,8 @@ const mapStateToProps = (state) => {
     checkMemberLoading: state.add_project_reducer.checkMemberLoading,
     checkMemberExists: state.add_project_reducer.checkMemberExists,
     checkMemberError: state.add_project_reducer.checkMemberError,
+    is_addUnit: state.add_project_reducer.is_addUnit,
+   
   };
 };
 
