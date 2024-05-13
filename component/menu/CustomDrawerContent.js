@@ -4,7 +4,7 @@ import { Logout_redux} from './../../redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link ,router} from 'expo-router';
 import { View ,StyleSheet ,Text ,Image} from  'react-native';
-
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 function CustomDrawerContent(props) {
     const retrieveData = async () => {
@@ -64,7 +64,9 @@ function CustomDrawerContent(props) {
                
                 <DrawerItemList {...props} />
              
-                <DrawerItem label={"Déconnexion"} onPress={() => logout()} />
+                <DrawerItem label={"Déconnexion"} onPress={() => logout()} 
+           
+          />
             </DrawerContentScrollView>
         </View>
     )

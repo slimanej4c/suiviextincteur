@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, Text, View, StyleSheet, Animated, Easing } from 'react-native';
+import { Pressable, Text, View, StyleSheet, Animated, Easing ,TouchableOpacity  }from 'react-native';
 import { Link } from 'expo-router';
 import { connect } from 'react-redux';
 import Menu from '../../../component/menu/Menu';
@@ -9,7 +9,19 @@ import { AntDesign } from '@expo/vector-icons';
 const Home = (props) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuAnimation] = useState(new Animated.Value(0));
+  const goToExtincteurDetails = () => {
+    // À remplacer par la navigation réelle vers la page de détails des extincteurs
+  };
 
+  // Fonction pour naviguer vers la page des projets
+  const goToProjectsPage = () => {
+ // À remplacer par la navigation réelle vers la page des projets
+  };
+
+  // Fonction pour naviguer vers le tableau de bord
+  const goToDashboard = () => {
+    // À remplacer par la navigation réelle vers le tableau de bord
+  };
   const toggleMenu = () => {
     //setMenuOpen(!menuOpen);
     props.menuOpen_redux()
@@ -31,53 +43,86 @@ const Home = (props) => {
   });
 
   return (
+  
     <View style={styles.container}>
-      <View style={styles.menuButton} >
-      
-      </View>
-      
-      <Animated.View style={[styles.menu, { transform: [{ translateX: menuPosition }] }]}>
-      
-      </Animated.View>
-    
+    {/* Section Notifications */}
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Notifications</Text>
+      <TouchableOpacity onPress={goToExtincteurDetails} style={styles.notification}>
+        <Text style={styles.notificationText}>Vous avez 10 extincteurs à vérifier ce mois-ci</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={goToExtincteurDetails} style={styles.notification}>
+        <Text style={styles.notificationText}>4 extincteurs à vérifier cette semaine</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={goToExtincteurDetails} style={styles.notification}>
+        <Text style={styles.notificationText}>1 extincteur à vérifier aujourd'hui</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={goToProjectsPage} style={styles.link}>
+        <Text style={styles.linkText}>Voir les détails</Text>
+      </TouchableOpacity>
     </View>
+
+    {/* Section Projets */}
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Projets</Text>
+      <TouchableOpacity onPress={goToProjectsPage} style={styles.link}>
+        <Text style={styles.linkText}>Vous avez 5 projets en cours</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={goToProjectsPage} style={styles.link}>
+        <Text style={styles.linkText}>2 projets en attente de rejoindre</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={goToProjectsPage} style={styles.link}>
+        <Text style={styles.linkText}>Créer un nouveau projet</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={goToProjectsPage} style={styles.link}>
+        <Text style={styles.linkText}>Rejoindre un projet existant</Text>
+      </TouchableOpacity>
+    </View>
+
+    {/* Section Récapitulatif */}
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Récapitulatif</Text>
+      <Text>7 projets, 20 sites, 300 extincteurs</Text>
+      <TouchableOpacity onPress={goToDashboard} style={styles.link}>
+        <Text style={styles.linkText}>Voir le tableau de bord</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+ 
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: 'hidden',
-    
+    padding: 20,
   },
-  menuButton: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    zIndex: 1,
-    backgroundColor: 'gray',
+  section: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  notification: {
+    backgroundColor: '#d3d3d3',
     padding: 10,
     borderRadius: 5,
-    zIndex:3,
-    
-    
+    marginBottom: 10,
   },
-  menuButtonText: {
-    color: 'white',
+  notificationText: {
     fontWeight: 'bold',
   },
-  menu: {
-    position: 'absolute',
-    top: 0,
-    left: '0%',
-    width: 300,
-    height: '100%',
-   
-
-    zIndex:2,
-  
+  link: {
+    marginTop: 5,
+  },
+  linkText: {
+    color: 'blue',
+    textDecorationLine: 'underline',
   },
 });
+
 
 const mapStateToProps = state => {
   return {
